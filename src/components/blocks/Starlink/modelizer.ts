@@ -81,20 +81,22 @@ export const buildInSpaceChart = (starlinks: Starlink[]) => {
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem) => {
-          const dataset = data.datasets[tooltipItem.datasetIndex!];
-          return tooltipItem.yLabel
-            ? `${dataset.label}: ${tooltipItem.yLabel as number} sats`
-            : '';
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            const dataset = data.datasets[tooltipItem.datasetIndex!];
+            return tooltipItem.yLabel
+              ? `${dataset.label}: ${tooltipItem.yLabel as number} sats`
+              : '';
+          },
         },
       },
     },
   };
   const options = deepmerge(settings.DEFAULTBARCHARTOPTIONS, customOptions);
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].ticks.callback = (label) => `${label} sats`;
+  if (options.scales?.y) {
+    options.scales.y.ticks.callback = (label) => `${label} sats`;
   }
 
   return { data, options };
@@ -130,24 +132,26 @@ export const buildLaunchRateChart = (starlinks: Starlink[]) => {
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem) => {
-          const dataset = data.datasets[tooltipItem.datasetIndex!];
-          return tooltipItem.yLabel
-            ? `${dataset.label}: ${tooltipItem.yLabel as number} sats`
-            : '';
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            const dataset = data.datasets[tooltipItem.datasetIndex!];
+            return tooltipItem.yLabel
+              ? `${dataset.label}: ${tooltipItem.yLabel as number} sats`
+              : '';
+          },
         },
       },
     },
   };
   const options = deepmerge(settings.DEFAULTBARCHARTOPTIONS, customOptions);
-  if (options.scales?.xAxes?.length) {
-    options.scales.xAxes[0].stacked = true;
+  if (options.scales?.x) {
+    options.scales.x.stacked = true;
   }
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].stacked = true;
-    options.scales.yAxes[0].ticks.callback = (label) => `${label} sats`;
+  if (options.scales?.y) {
+    options.scales.y.stacked = true;
+    options.scales.y.ticks.callback = (label) => `${label} sats`;
   }
 
   return { data, options };

@@ -56,22 +56,24 @@ const buildStarshipHopsChart = () => {
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem) =>
-          tooltipItem.value && parseInt(tooltipItem.value) > 0
-            ? `Height: ${formatHeight(tooltipItem.value)}`
-            : '',
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) =>
+            tooltipItem.value && parseInt(tooltipItem.value) > 0
+              ? `Height: ${formatHeight(tooltipItem.value)}`
+              : '',
+        },
       },
     },
   };
   const options = deepmerge(settings.DEFAULTBARCHARTOPTIONS, customOptions);
-  if (options.scales?.xAxes?.length) {
-    options.scales.xAxes[0].stacked = true;
+  if (options.scales?.x) {
+    options.scales.x.stacked = true;
   }
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].type = 'logarithmic';
-    options.scales.yAxes[0].ticks.callback = formatHeight;
+  if (options.scales?.y) {
+    options.scales.y.type = 'logarithmic';
+    options.scales.y.ticks.callback = formatHeight;
   }
 
   return { data, options };

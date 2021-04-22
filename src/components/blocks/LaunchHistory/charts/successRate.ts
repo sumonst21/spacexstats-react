@@ -70,23 +70,27 @@ export const buildSuccessRateChart = (pastLaunches: Launch[]) => {
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem, data) => {
-          if (!data.datasets) {
-            return '';
-          }
-          const dataset = data.datasets[tooltipItem.datasetIndex!];
-          return tooltipItem.yLabel
-            ? `${dataset.label}: ${(tooltipItem.yLabel as number).toFixed(2)}%`
-            : '';
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem, data) => {
+            if (!data.datasets) {
+              return '';
+            }
+            const dataset = data.datasets[tooltipItem.datasetIndex!];
+            return tooltipItem.yLabel
+              ? `${dataset.label}: ${(tooltipItem.yLabel as number).toFixed(
+                  2,
+                )}%`
+              : '';
+          },
         },
       },
     },
   };
   const options = deepmerge(settings.DEFAULTBARCHARTOPTIONS, customOptions);
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].ticks.callback = (label) => `${label}%`;
+  if (options.scales?.y) {
+    options.scales.y.ticks.callback = (label) => `${label}%`;
   }
 
   return { data, options };

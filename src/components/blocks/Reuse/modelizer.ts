@@ -79,31 +79,33 @@ const buildMostLaunchesChart = (cores: Core[], launches: Launch[]) => {
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem) => {
-          const currentCore = sortedCores.find(
-            (core) => core.serial === tooltipItem.xLabel,
-          )!;
-          const missions = getMissions(currentCore, launches)
-            .map((mission) => mission.name)
-            .join(', ');
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            const currentCore = sortedCores.find(
+              (core) => core.serial === tooltipItem.xLabel,
+            )!;
+            const missions = getMissions(currentCore, launches)
+              .map((mission) => mission.name)
+              .join(', ');
 
-          return tooltipItem.value && parseInt(tooltipItem.value) > 0
-            ? `Launches: ${parseInt(
-                tooltipItem.value,
-              ).toLocaleString()} (${missions})`
-            : '';
+            return tooltipItem.value && parseInt(tooltipItem.value) > 0
+              ? `Launches: ${parseInt(
+                  tooltipItem.value,
+                ).toLocaleString()} (${missions})`
+              : '';
+          },
         },
       },
     },
   };
   const options = deepmerge(settings.DEFAULTBARCHARTOPTIONS, customOptions);
-  if (options.scales?.xAxes?.length) {
-    options.scales.xAxes[0].stacked = true;
+  if (options.scales?.x) {
+    options.scales.x.stacked = true;
   }
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].ticks.stepSize = 1;
+  if (options.scales?.y) {
+    options.scales.y.ticks.stepSize = 1;
   }
 
   return { data, options, mostLaunchedCore: sortedCores[0] };

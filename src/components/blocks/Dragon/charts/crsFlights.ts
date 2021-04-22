@@ -53,58 +53,61 @@ export const buildCrsFlightsChart = (
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem) => {
-          const launch = dragonLaunches.find(
-            (launch) =>
-              getPayload(launch, payloads).name === tooltipItem.xLabel,
-          )!;
-          if (
-            tooltipItem.datasetIndex === undefined ||
-            !data.datasets[tooltipItem.datasetIndex]
-          ) {
-            return '';
-          }
-          if (!tooltipItem.yLabel) {
-            return '';
-          }
-          const dataset = data.datasets[tooltipItem.datasetIndex];
-          return `${dataset.label}: ${getFlightTime(
-            launch,
-            payloads,
-          ).toLocaleString()} hours`;
-        },
-        footer: (tooltipItems) => {
-          const currentLaunch = dragonLaunches.find(
-            (launch) =>
-              getPayload(launch, payloads).name === tooltipItems[0].xLabel,
-          )!;
-          const currentPayload = getPayload(currentLaunch, payloads);
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            const launch = dragonLaunches.find(
+              (launch) =>
+                getPayload(launch, payloads).name === tooltipItem.xLabel,
+            )!;
+            if (
+              tooltipItem.datasetIndex === undefined ||
+              !data.datasets[tooltipItem.datasetIndex]
+            ) {
+              return '';
+            }
+            if (!tooltipItem.yLabel) {
+              return '';
+            }
+            const dataset = data.datasets[tooltipItem.datasetIndex];
+            return `${dataset.label}: ${getFlightTime(
+              launch,
+              payloads,
+            ).toLocaleString()} hours`;
+          },
+          footer: (tooltipItems) => {
+            const currentLaunch = dragonLaunches.find(
+              (launch) =>
+                getPayload(launch, payloads).name === tooltipItems[0].xLabel,
+            )!;
+            const currentPayload = getPayload(currentLaunch, payloads);
 
-          if (
-            currentPayload.mass_kg === null ||
-            currentPayload.dragon.mass_returned_kg === null
-          ) {
-            return '';
-          }
+            if (
+              currentPayload.mass_kg === null ||
+              currentPayload.dragon.mass_returned_kg === null
+            ) {
+              return '';
+            }
 
-          return `Transported: ${Math.floor(
-            currentPayload.mass_kg,
-          ).toLocaleString()}kg (Up) and ${Math.floor(
-            currentPayload.dragon.mass_returned_kg,
-          ).toLocaleString()}kg (down)`;
+            return `Transported: ${Math.floor(
+              currentPayload.mass_kg,
+            ).toLocaleString()}kg (Up) and ${Math.floor(
+              currentPayload.dragon.mass_returned_kg,
+            ).toLocaleString()}kg (down)`;
+          },
         },
       },
     },
   };
+
   const options = deepmerge(settings.DEFAULTBARCHARTOPTIONS, customOptions);
-  if (options.scales?.xAxes?.length) {
-    options.scales.xAxes[0].stacked = true;
+  if (options.scales?.x) {
+    options.scales.x.stacked = true;
   }
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].stacked = true;
-    options.scales.yAxes[0].ticks.callback = (label) =>
+  if (options.scales?.y) {
+    options.scales.y.stacked = true;
+    options.scales.y.ticks.callback = (label) =>
       `${Math.ceil(Number(label)).toLocaleString()} hours`;
   }
 

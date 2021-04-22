@@ -44,51 +44,54 @@ export const buildCommercialCrewFlightsChart = (
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem) => {
-          const launch = dragonLaunches.find(
-            (launch) => launch.name === tooltipItem.xLabel,
-          );
-          if (!launch || tooltipItem.yLabel === 0) {
-            return '';
-          }
-          if (
-            tooltipItem.datasetIndex === undefined ||
-            !data.datasets[tooltipItem.datasetIndex]
-          ) {
-            return '';
-          }
-          const dataset = data.datasets[tooltipItem.datasetIndex];
-          const flightTime = launch.name.includes('Abort')
-            ? '8 minutes 54 seconds'
-            : `${getFlightTime(launch, payloads).toLocaleString()} hours`;
-          return `${dataset.label}: ${flightTime}`;
-        },
-        footer: (tooltipItems) => {
-          const launch = dragonLaunches.find(
-            (launch) => launch.name === tooltipItems[0].xLabel,
-          );
-          if (!launch) {
-            return '';
-          }
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            const launch = dragonLaunches.find(
+              (launch) => launch.name === tooltipItem.xLabel,
+            );
+            if (!launch || tooltipItem.yLabel === 0) {
+              return '';
+            }
+            if (
+              tooltipItem.datasetIndex === undefined ||
+              !data.datasets[tooltipItem.datasetIndex]
+            ) {
+              return '';
+            }
+            const dataset = data.datasets[tooltipItem.datasetIndex];
+            const flightTime = launch.name.includes('Abort')
+              ? '8 minutes 54 seconds'
+              : `${getFlightTime(launch, payloads).toLocaleString()} hours`;
+            return `${dataset.label}: ${flightTime}`;
+          },
+          footer: (tooltipItems) => {
+            const launch = dragonLaunches.find(
+              (launch) => launch.name === tooltipItems[0].xLabel,
+            );
+            if (!launch) {
+              return '';
+            }
 
-          const crewCount = crew.filter((person) =>
-            person.launches.includes(launch.id),
-          ).length;
+            const crewCount = crew.filter((person) =>
+              person.launches.includes(launch.id),
+            ).length;
 
-          return `People: ${crewCount}`;
+            return `People: ${crewCount}`;
+          },
         },
       },
     },
   };
+
   const options = deepmerge(settings.DEFAULTBARCHARTOPTIONS, customOptions);
-  if (options.scales?.xAxes?.length) {
-    options.scales.xAxes[0].stacked = true;
+  if (options.scales?.x) {
+    options.scales.x.stacked = true;
   }
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].stacked = true;
-    options.scales.yAxes[0].ticks.callback = (label) =>
+  if (options.scales?.y) {
+    options.scales.y.stacked = true;
+    options.scales.y.ticks.callback = (label) =>
       `${Math.ceil(Number(label)).toLocaleString()} hours`;
   }
 

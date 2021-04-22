@@ -72,22 +72,24 @@ const buildCustomersChart = (pastLaunches: Launch[], payloads: Payload[]) => {
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem) => {
-          if (
-            tooltipItem.index === undefined ||
-            !Object.keys(customers)[tooltipItem.index]
-          ) {
-            return ``;
-          }
-          const customer = Object.keys(customers)[tooltipItem.index];
-          const launchCount = Object.values(customers)[tooltipItem.index];
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            if (
+              tooltipItem.index === undefined ||
+              !Object.keys(customers)[tooltipItem.index]
+            ) {
+              return ``;
+            }
+            const customer = Object.keys(customers)[tooltipItem.index];
+            const launchCount = Object.values(customers)[tooltipItem.index];
 
-          return `${customer}: ${launchCount} launches (${(
-            (100 * launchCount) /
-            pastLaunches.length
-          ).toFixed(0)}%)`;
+            return `${customer}: ${launchCount} launches (${(
+              (100 * launchCount) /
+              pastLaunches.length
+            ).toFixed(0)}%)`;
+          },
         },
       },
     },
@@ -167,38 +169,40 @@ const buildUpmassPerYearChart = (
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      mode: 'x',
-      callbacks: {
-        label: (tooltipItem) => {
-          if (
-            tooltipItem.datasetIndex === undefined ||
-            !data.datasets[tooltipItem.datasetIndex]
-          ) {
-            return '';
-          }
-          const dataset = data.datasets[tooltipItem.datasetIndex];
-          return `${dataset.label}: ${Math.floor(
-            Number(tooltipItem.yLabel) / 1000,
-          ).toLocaleString()}t`;
-        },
-        footer: (tooltipItems) => {
-          const totalCount = tooltipItems.reduce(
-            (sum, tooltipItem) => sum + (tooltipItem.yLabel as number),
-            0,
-          );
-          return `TOTAL: ${Math.floor(totalCount / 1000).toLocaleString()}t`;
+    plugins: {
+      tooltip: {
+        mode: 'x',
+        callbacks: {
+          label: (tooltipItem) => {
+            if (
+              tooltipItem.datasetIndex === undefined ||
+              !data.datasets[tooltipItem.datasetIndex]
+            ) {
+              return '';
+            }
+            const dataset = data.datasets[tooltipItem.datasetIndex];
+            return `${dataset.label}: ${Math.floor(
+              Number(tooltipItem.yLabel) / 1000,
+            ).toLocaleString()}t`;
+          },
+          footer: (tooltipItems) => {
+            const totalCount = tooltipItems.reduce(
+              (sum, tooltipItem) => sum + (tooltipItem.yLabel as number),
+              0,
+            );
+            return `TOTAL: ${Math.floor(totalCount / 1000).toLocaleString()}t`;
+          },
         },
       },
     },
   };
   const options = deepmerge(settings.DEFAULTBARCHARTOPTIONS, customOptions);
-  if (options.scales?.xAxes?.length) {
-    options.scales.xAxes[0].stacked = true;
+  if (options.scales?.x) {
+    options.scales.x.stacked = true;
   }
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].stacked = true;
-    options.scales.yAxes[0].ticks.callback = (label) =>
+  if (options.scales?.y) {
+    options.scales.y.stacked = true;
+    options.scales.y.ticks.callback = (label) =>
       `${Math.floor(Number(label) / 1000).toLocaleString()}t`;
   }
 

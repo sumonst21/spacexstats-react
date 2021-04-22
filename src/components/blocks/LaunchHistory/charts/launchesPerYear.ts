@@ -102,24 +102,26 @@ export const buildLaunchesPerYearChart = (
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      mode: 'label',
-      callbacks: {
-        label: (tooltipItem, data) => {
-          if (!data.datasets) {
-            return '';
-          }
-          const dataset = data.datasets[tooltipItem.datasetIndex!];
-          return tooltipItem.yLabel
-            ? `${dataset.label}: ${tooltipItem.yLabel}`
-            : '';
-        },
-        footer: (tooltipItems) => {
-          const totalCount = tooltipItems.reduce(
-            (sum, tooltipItem) => sum + (tooltipItem.yLabel as number),
-            0,
-          );
-          return `TOTAL: ${totalCount}`;
+    plugins: {
+      tooltip: {
+        mode: 'label',
+        callbacks: {
+          label: (tooltipItem, data) => {
+            if (!data.datasets) {
+              return '';
+            }
+            const dataset = data.datasets[tooltipItem.datasetIndex!];
+            return tooltipItem.yLabel
+              ? `${dataset.label}: ${tooltipItem.yLabel}`
+              : '';
+          },
+          footer: (tooltipItems) => {
+            const totalCount = tooltipItems.reduce(
+              (sum, tooltipItem) => sum + (tooltipItem.yLabel as number),
+              0,
+            );
+            return `TOTAL: ${totalCount}`;
+          },
         },
       },
     },
@@ -128,11 +130,11 @@ export const buildLaunchesPerYearChart = (
     settings.DEFAULTBARCHARTOPTIONS,
     customOptions,
   );
-  if (options.scales?.xAxes?.length) {
-    options.scales.xAxes[0].stacked = true;
+  if (options.scales?.x) {
+    options.scales.x.stacked = true;
   }
-  if (options.scales?.yAxes?.length) {
-    options.scales.yAxes[0].stacked = true;
+  if (options.scales?.y) {
+    options.scales.y.stacked = true;
   }
 
   return { data, options };

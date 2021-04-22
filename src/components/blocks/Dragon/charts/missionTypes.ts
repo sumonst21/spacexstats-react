@@ -35,19 +35,21 @@ export const buildMissionTypesChart = (
   };
 
   const customOptions: ChartOptions = {
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem) => {
-          if (
-            tooltipItem.index === undefined ||
-            !Object.keys(missions)[tooltipItem.index]
-          ) {
-            return ``;
-          }
-          const missionType = Object.keys(missions)[tooltipItem.index];
-          const launchCount = Object.values(missions)[tooltipItem.index];
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            if (
+              tooltipItem.index === undefined ||
+              !Object.keys(missions)[tooltipItem.index]
+            ) {
+              return ``;
+            }
+            const missionType = Object.keys(missions)[tooltipItem.index];
+            const launchCount = Object.values(missions)[tooltipItem.index];
 
-          return `${missionType}: ${launchCount} missions`;
+            return `${missionType}: ${launchCount} missions`;
+          },
         },
       },
     },
